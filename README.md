@@ -6,6 +6,6 @@ Compiled with VS Express 2012
 Compatible with Windows XP, Vista, 7, 8, 10
 
 
-freetype263MT.dll use the static CRT
+freetype265MT.dll use the static CRT
 
-freetype263.dll use the dynamic CRT (require Visual C++ 2012 Redistribuable to be present on system)
+freetype265.dll use the dynamic CRT (require Visual C++ 2012 Redistribuable to be present on system)
