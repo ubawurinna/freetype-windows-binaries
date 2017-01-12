@@ -951,6 +951,10 @@ FT_BEGIN_HEADER
   /*                           strikes in the face.  It is set to NULL if  */
   /*                           there is no bitmap strike.                  */
   /*                                                                       */
+  /*                           Note that FreeType tries to sanitize the    */
+  /*                           strike data since they are sometimes sloppy */
+  /*                           or incorrect, but this can easily fail.     */
+  /*                                                                       */
   /*    num_charmaps        :: The number of charmaps in the face.         */
   /*                                                                       */
   /*    charmaps            :: An array of the charmaps of the face.       */
@@ -1361,6 +1365,20 @@ FT_BEGIN_HEADER
   /*************************************************************************
    *
    * @macro:
+   *   FT_IS_NAMED_INSTANCE( face )
+   *
+   * @description:
+   *   A macro that returns true whenever a face object is a named instance
+   *   of a GX variation font.
+   *
+   */
+#define FT_IS_NAMED_INSTANCE( face ) \
+          ( (face)->face_index & 0x7FFF0000L )
+
+
+  /*************************************************************************
+   *
+   * @macro:
    *   FT_IS_CID_KEYED( face )
    *
    * @description:
@@ -1713,7 +1731,6 @@ FT_BEGIN_HEADER
   /*    position (e.g., coordinates (0,0) on the baseline).  Of course,    */
   /*    `slot->format' is also changed to @FT_GLYPH_FORMAT_BITMAP.         */
   /*                                                                       */
-  /* <Note>                                                                */
   /*    Here is a small pseudo code fragment that shows how to use         */
   /*    `lsb_delta' and `rsb_delta':                                       */
   /*                                                                       */
@@ -1740,6 +1757,12 @@ FT_BEGIN_HEADER
   /*        origin_x += face->glyph->advance.x;                            */
   /*      endfor                                                           */
   /*    }                                                                  */
+  /*                                                                       */
+  /*    If you use strong auto-hinting, you *must* apply these delta       */
+  /*    values!  Otherwise you will experience far too large inter-glyph   */
+  /*    spacing at small rendering sizes in most cases.  Note that it      */
+  /*    doesn't harm to use the above code for other hinting modes also,   */
+  /*    since the delta values are zero then.                              */
   /*                                                                       */
   typedef struct  FT_GlyphSlotRec_
   {
@@ -2308,7 +2331,10 @@ FT_BEGIN_HEADER
   /*    FT_Select_Size                                                     */
   /*                                                                       */
   /* <Description>                                                         */
-  /*    Select a bitmap strike.                                            */
+  /*    Select a bitmap strike.  To be more precise, this function sets    */
+  /*    the scaling factors of the active @FT_Size object in a face so     */
+  /*    that bitmaps from this particular strike are taken by              */
+  /*    @FT_Load_Glyph and friends.                                        */
   /*                                                                       */
   /* <InOut>                                                               */
   /*    face         :: A handle to a target face object.                  */
@@ -2319,6 +2345,20 @@ FT_BEGIN_HEADER
   /*                                                                       */
   /* <Return>                                                              */
   /*    FreeType error code.  0~means success.                             */
+  /*                                                                       */
+  /* <Note>                                                                */
+  /*    For bitmaps embedded in outline fonts it is common that only a     */
+  /*    subset of the available glyphs at a given ppem value is available. */
+  /*    FreeType silently uses outlines if there is no bitmap for a given  */
+  /*    glyph index.                                                       */
+  /*                                                                       */
+  /*    For GX variation fonts, a bitmap strike makes sense only if the    */
+  /*    default instance is active (this is, no glyph variation takes      */
+  /*    place); otherwise, FreeType simply ignores bitmap strikes.  The    */
+  /*    same is true for all named instances that are different from the   */
+  /*    default instance.                                                  */
+  /*                                                                       */
+  /*    Don't use this function if you are using the FreeType cache API.   */
   /*                                                                       */
   FT_EXPORT( FT_Error )
   FT_Select_Size( FT_Face  face,
@@ -2331,12 +2371,21 @@ FT_BEGIN_HEADER
   /*    FT_Size_Request_Type                                               */
   /*                                                                       */
   /* <Description>                                                         */
-  /*    An enumeration type that lists the supported size request types.   */
+  /*    An enumeration type that lists the supported size request types,   */
+  /*    i.e., what input size (in font units) maps to the requested output */
+  /*    size (in pixels, as computed from the arguments of                 */
+  /*    @FT_Size_Request).                                                 */
   /*                                                                       */
   /* <Values>                                                              */
   /*    FT_SIZE_REQUEST_TYPE_NOMINAL ::                                    */
   /*      The nominal size.  The `units_per_EM' field of @FT_FaceRec is    */
   /*      used to determine both scaling values.                           */
+  /*                                                                       */
+  /*      This is the standard scaling found in most applications.  In     */
+  /*      particular, use this size request type for TrueType fonts if     */
+  /*      they provide optical scaling or something similar.  Note,        */
+  /*      however, that `units_per_EM' is a rather abstract value which    */
+  /*      bears no relation to the actual size of the glyphs in a font.    */
   /*                                                                       */
   /*    FT_SIZE_REQUEST_TYPE_REAL_DIM ::                                   */
   /*      The real dimension.  The sum of the `ascender' and (minus of)    */
@@ -2391,21 +2440,28 @@ FT_BEGIN_HEADER
   /* <Fields>                                                              */
   /*    type           :: See @FT_Size_Request_Type.                       */
   /*                                                                       */
-  /*    width          :: The desired width.                               */
+  /*    width          :: The desired width, given as a 26.6 fractional    */
+  /*                      point value (with 72pt = 1in).                   */
   /*                                                                       */
-  /*    height         :: The desired height.                              */
+  /*    height         :: The desired height, given as a 26.6 fractional   */
+  /*                      point value (with 72pt = 1in).                   */
   /*                                                                       */
-  /*    horiResolution :: The horizontal resolution.  If set to zero,      */
-  /*                      `width' is treated as a 26.6 fractional pixel    */
-  /*                      value.                                           */
+  /*    horiResolution :: The horizontal resolution (dpi, i.e., pixels per */
+  /*                      inch).  If set to zero, `width' is treated as a  */
+  /*                      26.6 fractional *pixel* value.                   */
   /*                                                                       */
-  /*    vertResolution :: The vertical resolution.  If set to zero,        */
-  /*                      `height' is treated as a 26.6 fractional pixel   */
-  /*                      value.                                           */
+  /*    vertResolution :: The vertical resolution (dpi, i.e., pixels per   */
+  /*                      inch).  If set to zero, `height' is treated as a */
+  /*                      26.6 fractional *pixel* value.                   */
   /*                                                                       */
   /* <Note>                                                                */
   /*    If `width' is zero, then the horizontal scaling value is set equal */
   /*    to the vertical scaling value, and vice versa.                     */
+  /*                                                                       */
+  /*    If `type' is FT_SIZE_REQUEST_TYPE_SCALES, `width' and `height' are */
+  /*    interpreted directly as 16.16 fractional scaling values, without   */
+  /*    any further modification, and both `horiResolution' and            */
+  /*    `vertResolution' are ignored.                                      */
   /*                                                                       */
   typedef struct  FT_Size_RequestRec_
   {
@@ -2756,6 +2812,14 @@ FT_BEGIN_HEADER
    *
    *     Currently, this flag is only implemented for TrueType fonts.
    *
+   *   FT_LOAD_BITMAP_METRICS_ONLY ::
+   *     This flag is used to request loading of the metrics and bitmap
+   *     image information of a (possibly embedded) bitmap glyph without
+   *     allocating or copying the bitmap image data itself.  No effect if
+   *     the target glyph is not a bitmap image.
+   *
+   *     This flag unsets @FT_LOAD_RENDER.
+   *
    *   FT_LOAD_CROP_BITMAP ::
    *     Ignored.  Deprecated.
    *
@@ -2802,6 +2866,7 @@ FT_BEGIN_HEADER
   /* Bits 16..19 are used by `FT_LOAD_TARGET_' */
 #define FT_LOAD_COLOR                        ( 1L << 20 )
 #define FT_LOAD_COMPUTE_METRICS              ( 1L << 21 )
+#define FT_LOAD_BITMAP_METRICS_ONLY          ( 1L << 22 )
 
   /* */
 
@@ -4175,8 +4240,8 @@ FT_BEGIN_HEADER
    *
    */
 #define FREETYPE_MAJOR  2
-#define FREETYPE_MINOR  6
-#define FREETYPE_PATCH  5
+#define FREETYPE_MINOR  7
+#define FREETYPE_PATCH  1
 
 
   /*************************************************************************/
