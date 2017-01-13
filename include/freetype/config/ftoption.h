@@ -309,7 +309,7 @@ FT_BEGIN_HEADER
   /*   Do not #undef these macros here since the build system might define */
   /*   them for certain configurations only.                               */
   /*                                                                       */
-/* #define FT_EXPORT(x)      extern x */
+#define FT_EXPORT(x) __declspec(dllexport) x
 /* #define FT_EXPORT_DEF(x)  x */
 
 
