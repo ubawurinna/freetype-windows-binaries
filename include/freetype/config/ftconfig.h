@@ -4,7 +4,7 @@
 /*                                                                         */
 /*    ANSI-specific configuration file (specification only).               */
 /*                                                                         */
-/*  Copyright 1996-2016 by                                                 */
+/*  Copyright 1996-2017 by                                                 */
 /*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
 /*                                                                         */
 /*  This file is part of the FreeType project, and may only be used,       */
@@ -333,6 +333,15 @@ FT_BEGIN_HEADER
 #endif
 
 
+#ifdef _WIN64
+  /* only 64bit Windows uses the LLP64 data model, i.e., */
+  /* 32bit integers, 64bit pointers                      */
+#define FT_UINT_TO_POINTER( x ) (void*)(unsigned __int64)(x)
+#else
+#define FT_UINT_TO_POINTER( x ) (void*)(unsigned long)(x)
+#endif
+
+
   /*************************************************************************/
   /*                                                                       */
   /* miscellaneous                                                         */
@@ -405,6 +414,15 @@ FT_BEGIN_HEADER
 #define FT_EXPORT( x )  extern "C"  x
 #else
 #define FT_EXPORT( x )  extern  x
+#endif
+
+#ifdef _MSC_VER
+#undef FT_EXPORT
+#ifdef FREETYPE2_EXPORTS
+#define FT_EXPORT( x )  __declspec( dllexport )  x
+#else
+#define FT_EXPORT( x )  __declspec( dllimport )  x
+#endif
 #endif
 
 #endif /* !FT_EXPORT */
