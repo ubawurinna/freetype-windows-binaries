@@ -398,6 +398,15 @@ FT_BEGIN_HEADER
 #define FT_EXPORT( x )  extern  x
 #endif
 
+#ifdef _MSC_VER
+#undef FT_EXPORT
+#ifdef FREETYPE2_EXPORTS
+#define FT_EXPORT( x )  __declspec( dllexport )  x
+#else
+#define FT_EXPORT( x )  __declspec( dllimport )  x
+#endif
+#endif
+
 #endif /* !FT_EXPORT */
 
 
