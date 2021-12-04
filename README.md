@@ -1,23 +1,22 @@
 FreeType 2.11.0
 =========================
 ###### FreeType Windows libraries (win32/win64)
-Compiled with VS Express 2017 (SDK 10.0.19041.0)
-> The *freetype* libraries use the *Universal CRT* and therefore **_requires_** Visual C++ 2015-2019 Redistributable to be present on system.
+Compiled with VS Express 2017 (SDK 10.0.22000)
+> The *freetype* libraries use the *Universal CRT* and therefore **_requires_** Visual C++ 2015-2022 Redistributable to be present on system.
 ###### Supported operating systems
 - Windows 10 version 1507 or higher
-- Windows Server 2016
+- Windows Server 2019, Windows Server 2016 and Windows Server 2012 R2
 - Windows 8.1
-- Windows Server 2012 R2
 - Windows 7 SP1
 ###### Hash values for DLL files
 | filename | sha256 |
 | :-- | :-- |
-| release dll\\win32\\**freetype.dll** | `74359C9397A2E9B258BA874176B6727ADF6220B6ADD2863C434D92943A453345` |
-| release dll\\win32\\**freetype.lib** | `FF9793CBBF37BA7B945B06156244697B416449D758903CCEC9CBF4A3B2BB5C0D` |
-| release dll\\win64\\**freetype.dll** | `317DC3F85F2D0632F832F774E30D5FA15E9DA02F3C28ADC1DD96A708F1B11887` |
-| release dll\\win64\\**freetype.lib** | `E016F8AFA960DA588269AB9786DB7B5A670A1CCD767606CBBF74056ACE33ABF5` |
+| release dll\\win32\\**freetype.dll** | `A5D0789BB70E858E8831EDFA46070A24088EB80CA6DC4128D8198C1A7F8A5F4E` |
+| release dll\\win32\\**freetype.lib** | `8E55D7483B8885ED9AB3B0A19A7065C65E66E12465EF237E7C633A45E3AE32A5` |
+| release dll\\win64\\**freetype.dll** | `1C487392D6D06970BA3C7B52705881F1FB069F607243499276C2F0C033C7DF6F` |
+| release dll\\win64\\**freetype.lib** | `1215297E6DC6BF5FBC6357A99D250D1733DB128F0FCED3EBF28770E10C625E82` |
 ###### Hash values for static library files
 | filename | sha256 |
 | :-- | :-- |
-| release static\\vs2015-2019\\win32\\**freetype.lib** | `6E4DEAAC7E8BB5E34F932D22C4F43446BD8EBC5B9C4159CE5A9AF5BC197B7AB8` |
-| release static\\vs2015-2019\\win64\\**freetype.lib** | `70500CA574A5E226E0927248E76AB7D357B79829F0898842D617CEE62FE77D6C` |
+| release static\\vs2015-2022\\win32\\**freetype.lib** | `98A24B77C9CF9E01BDA5ED6EA47B76B50C5F78BCC0EB2D459C1953DD476F61AC` |
+| release static\\vs2015-2022\\win64\\**freetype.lib** | `65229B762B2915208584C428F08162553F81B2AAB065B81987AC7CC1664AB995` |
