@@ -1,4 +1,4 @@
-FreeType 2.11.0
+FreeType 2.11.1
 =========================
 ###### FreeType Windows libraries (win32/win64)
 Compiled with VS Express 2017 (SDK 10.0.22000)
