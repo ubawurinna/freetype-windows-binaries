@@ -1,4 +1,4 @@
-FreeType 2.13
+FreeType 2.13.0
 =========================
 ###### FreeType Windows libraries (win32/win64)
 Compiled with VS 2022 (SDK 10.0.22621)
