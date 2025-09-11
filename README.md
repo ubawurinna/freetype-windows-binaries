@@ -1,5 +1,8 @@
 FreeType 2.14.0
 =========================
+
+> ⚠️ **WARNING:** This release contains severe bugs. **Do not use.**
+
 ###### FreeType Windows libraries (win32/win64)
 Compiled with VS 2022 (SDK 10.0.26100)
 > The *freetype* libraries use the *Universal CRT* and therefore **_requires_** Visual C++ 2015-2022 Redistributable to be present on system.
@@ -20,3 +23,4 @@ Compiled with VS 2022 (SDK 10.0.26100)
 | :-- | :-- |
 | release static\\vs2015-2022\\win32\\**freetype.lib** | `A09DEFE32AB26D3771CCD5F77FBC588C7FF04B494858A63115FEF9105281556C` |
 | release static\\vs2015-2022\\win64\\**freetype.lib** | `10181B757CC255DAB0ECF41009A0680DF733F4313E4CFF3B6FB23C26D8DE1E4F` |
+
