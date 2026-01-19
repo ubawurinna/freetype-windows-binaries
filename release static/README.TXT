@@ -1,1 +1,1 @@
-These static libraries will only work with visual studio 2015-2022
+These static libraries will only work with visual studio 2017-2026
