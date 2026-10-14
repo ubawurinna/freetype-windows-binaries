@@ -4,7 +4,7 @@
  *
  *   FreeType high-level API and common types (specification only).
  *
- * Copyright (C) 1996-2025 by
+ * Copyright (C) 1996-2026 by
  * David Turner, Robert Wilhelm, and Werner Lemberg.
  *
  * This file is part of the FreeType project, and may only be used,
@@ -4134,7 +4134,7 @@ FT_BEGIN_HEADER
    *   This function returns an error if the charmap is not part of the face
    *   (i.e., if it is not listed in the `face->charmaps` table).
    *
-   *   It also fails if an OpenType type~14 charmap is selected (which
+   *   It also fails if an OpenType type 14 or~15 charmap is selected (which
    *   doesn't map character codes to glyph indices at all).
    */
   FT_EXPORT( FT_Error )
@@ -4318,13 +4318,12 @@ FT_BEGIN_HEADER
    *     property `no-stem-darkening` provided by the 'autofit', 'cff',
    *     'type1', and 't1cid' modules; see @no-stem-darkening).
    *
-   *   * @FT_PARAM_TAG_LCD_FILTER_WEIGHTS (LCD filter weights, corresponding
-   *     to function @FT_Library_SetLcdFilterWeights).
-   *
    *   * @FT_PARAM_TAG_RANDOM_SEED (seed value for the CFF, Type~1, and CID
    *     'random' operator, corresponding to the `random-seed` property
    *     provided by the 'cff', 'type1', and 't1cid' modules; see
    *     @random-seed).
+   *
+   *   * @FT_PARAM_TAG_LCD_FILTER_WEIGHTS (no longer supported).
    *
    *   Pass `NULL` as `data` in @FT_Parameter for a given tag to reset the
    *   option and use the library or module default again.
@@ -4352,25 +4351,17 @@ FT_BEGIN_HEADER
    *     FT_Bool              darken_stems = 1;
    *
    *     FT_Parameter         property2;
-   *     FT_LcdFiveTapFilter  custom_weight =
-   *                            { 0x11, 0x44, 0x56, 0x44, 0x11 };
-   *
-   *     FT_Parameter         property3;
    *     FT_Int32             random_seed = 314159265;
    *
-   *     FT_Parameter         properties[3] = { property1,
-   *                                            property2,
-   *                                            property3 };
+   *     FT_Parameter         properties[2] = { property1,
+   *                                            property2 };
    *
    *
    *     property1.tag  = FT_PARAM_TAG_STEM_DARKENING;
    *     property1.data = &darken_stems;
    *
-   *     property2.tag  = FT_PARAM_TAG_LCD_FILTER_WEIGHTS;
-   *     property2.data = custom_weight;
-   *
-   *     property3.tag  = FT_PARAM_TAG_RANDOM_SEED;
-   *     property3.data = &random_seed;
+   *     property2.tag  = FT_PARAM_TAG_RANDOM_SEED;
+   *     property2.data = &random_seed;
    *
    *     FT_Face_Properties( face, 3, properties );
    *   ```
@@ -4381,7 +4372,7 @@ FT_BEGIN_HEADER
    *     FT_Parameter  property;
    *
    *
-   *     property.tag  = FT_PARAM_TAG_LCD_FILTER_WEIGHTS;
+   *     property.tag  = FT_PARAM_TAG_STEM_DARKENING;
    *     property.data = NULL;
    *
    *     FT_Face_Properties( face, 1, &property );
@@ -4709,7 +4700,7 @@ FT_BEGIN_HEADER
    *
    * @abstract:
    *   The FreeType~2 interface to Unicode Variation Sequences (UVS), using
-   *   the SFNT cmap format~14.
+   *   the SFNT cmap formats 14 and~15.
    *
    * @description:
    *   Many characters, especially for CJK scripts, have variant forms.  They
@@ -4739,9 +4730,10 @@ FT_BEGIN_HEADER
    *   U+9089, you have to write the character sequence `U+9089 U+E0100`.
    *
    *   Adobe and MS decided to support both standardized and ideographic VS
-   *   with a new cmap subtable (format~14).  It is an odd subtable because
-   *   it is not a mapping of input code points to glyphs, but contains lists
-   *   of all variations supported by the font.
+   *   with a new cmap subtable (format~14, or format~15 for glyph indices
+   *   above 65535).  It is an odd subtable because it is not a mapping of
+   *   input code points to glyphs, but contains lists of all variations
+   *   supported by the font.
    *
    *   A variation may be either 'default' or 'non-default' for a given font.
    *   A default variation is the one you will get for that code point if you
@@ -5177,8 +5169,8 @@ FT_BEGIN_HEADER
    *
    */
 #define FREETYPE_MAJOR  2
-#define FREETYPE_MINOR  14
-#define FREETYPE_PATCH  1
+#define FREETYPE_MINOR  15
+#define FREETYPE_PATCH  0
 
 
   /**************************************************************************
